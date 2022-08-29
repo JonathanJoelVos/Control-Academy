@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import EnrolledClass from "./EnrolledClass.js"
 
 const userSchema = new mongoose.Schema({
     cpf: {

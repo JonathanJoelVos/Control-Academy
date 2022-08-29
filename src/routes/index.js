@@ -1,5 +1,7 @@
 import express from "express";
-import users from "../routes/userRoutes.js"
+import users from "../routes/userRoutes.js";
+import papers from "../routes/paperRoutes.js";
+import actions from "../routes/actionRoutes.js";
 
 const routes = (app) => {
     app.route("/").get((req, res) => {
@@ -8,7 +10,9 @@ const routes = (app) => {
 
     app.use(
         express.json(),
-        users
+        users,
+        papers,
+        actions
     )
 }
 

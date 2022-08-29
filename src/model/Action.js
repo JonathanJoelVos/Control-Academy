@@ -12,6 +12,8 @@ const actionSchema = new mongoose.Schema({
         }],
         required: true
     }
+}, {
+    versionKey: false
 })
 
 const model = mongoose.model('actions', actionSchema);
