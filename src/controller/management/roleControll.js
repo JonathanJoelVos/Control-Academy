@@ -1,47 +1,63 @@
 import roles from '../../model/Role.js';
 import actions from '../../model/Action.js';
 
-const createRole = async (req, res) => {
+async function create(req, res, models) {
     try {
-        const role = new roles(req.body);
-        await role.save();
-        res.status(201).send(role);
-    } catch (err) {
-        res.status(404).send(err);
+        const model = new models(req.body);
+        await model.save();
+        res.send(model)
+    } catch (error) {
+        res.status(404).send(error);
     }
 }
-
-const listRoles = async (req, res) => {
+async function read(res, model, populate = '') {
     try {
-        const checkRole = await roles.find().populate('actions');
-        res.status(201).json(checkRole);
-
+        const checkModel = await model.find()
+        res.status(201).json(checkModel);
     } catch (error) {
         res.status(404).send(error);
     }
 }
 
-const updateRoles = async (req, res) => {
+async function update(req, res, model) {
     try {
         const { id } = req.params;
-        await roles.findByIdAndUpdate(id, { $set: req.body });
+        await model.findByIdAndUpdate(id, { $set: req.body });
         res.status(201).send("Update feito com sucesso");
     } catch (error) {
         res.status(404).send(error.message);
     }
 }
 
-const deleteRoles = async (req, res) => {
+async function remove(req, res, model) {
     try {
         const { id } = req.params;
-        await roles.findByIdAndDelete(id);
+        await model.findByIdAndDelete(id);
         res.status(201).send("Remoção feita com sucesso");
     } catch (error) {
         res.status(404).send(error);
     }
 }
 
-const addActionsInPapers = async (req, res) => {
+
+const createRole = (req, res) => {
+    create(req, res, roles);
+}
+
+
+const listRoles = (req, res) => {
+    read(res, roles, "actions");
+}
+
+const updateRoles = (req, res) => {
+    update(req, res, roles);
+}
+
+const deleteRoles = async (req, res) => {
+    remove(req, res, roles);
+}
+
+const addActionsInRoles = async (req, res) => {
     try {
         const { id } = req.params; //id da role
         const { name } = req.query; //name da action
@@ -68,7 +84,8 @@ const roleControll = {
     createRole,
     listRoles,
     updateRoles,
-    deleteRoles
+    deleteRoles,
+    addActionsInRoles
 }
 
 export default roleControll;

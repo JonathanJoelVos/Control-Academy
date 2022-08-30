@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const paperSchema = new mongoose.Schema({
+const roleSchema = new mongoose.Schema({
     name: {
         type: String,
         required: true,
@@ -17,6 +17,6 @@ const paperSchema = new mongoose.Schema({
     versionKey: false
 })
 
-const model = mongoose.model('roles', paperSchema);
+const model = mongoose.model('roles', roleSchema);
 
 export default model;

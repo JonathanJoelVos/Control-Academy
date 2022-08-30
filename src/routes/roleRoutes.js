@@ -7,6 +7,8 @@ routes
     .get("/roles", AdminController.listRoles)
     .post("/roles/create", AdminController.createRole)
     .put("/roles/update/:id", AdminController.updateRoles)
+    .patch("/roles/actions")
     .delete("/roles/delete/:id", AdminController.deleteRoles)
+
 
 export default routes;
