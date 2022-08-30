@@ -1,11 +1,14 @@
 import express from "express";
-import AdminController from "../controller/adminController.js";
+import AdminController from "../controller/users/adminController.js";
 
 const routes = express.Router();
 
 routes
+    .get("/actions", AdminController.listActions)
     .post("/actions/create", AdminController.createAction)
-    .patch("/action/update/:id", AdminController.addMethodInActions)
-
+    .put("/actions/update/:id", AdminController.updateActions)
+    .patch("/actions/methods", AdminController.addMethodInActions)
+    .delete("/actions/delete/:id", AdminController.deleteActions)
+    .delete("/actions/methods/delete", AdminController.deleteMethodInActions)
 
 export default routes;

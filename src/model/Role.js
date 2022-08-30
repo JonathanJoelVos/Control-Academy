@@ -17,6 +17,6 @@ const paperSchema = new mongoose.Schema({
     versionKey: false
 })
 
-const model = mongoose.model('papers', paperSchema);
+const model = mongoose.model('roles', paperSchema);
 
 export default model;

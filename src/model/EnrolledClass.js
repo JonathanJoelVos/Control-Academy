@@ -4,7 +4,7 @@ const enrolledClassSchema = new mongoose.Schema({
     paper: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
-        ref: 'papers'
+        ref: 'roles'
     },
     class: {
         type: [{
