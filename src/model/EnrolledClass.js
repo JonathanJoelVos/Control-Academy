@@ -19,6 +19,8 @@ const enrolledClassSchema = new mongoose.Schema({
     frequency: {
         type: Number
     }
+}, {
+    versionKey: false
 })
 
 const model = mongoose.model('enrolledClass', enrolledClassSchema);

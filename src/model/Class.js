@@ -30,6 +30,8 @@ const classSchema = new mongoose.Schema({
         ref: "disciplines"
     }
 
+}, {
+    versionKey: false
 })
 
 const model = mongoose.model('classes', classSchema);

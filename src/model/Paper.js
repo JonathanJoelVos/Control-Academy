@@ -13,6 +13,8 @@ const paperSchema = new mongoose.Schema({
         }],
         required: true
     }
+}, {
+    versionKey: false
 })
 
 const model = mongoose.model('papers', paperSchema);

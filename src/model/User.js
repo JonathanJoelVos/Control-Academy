@@ -36,6 +36,8 @@ const userSchema = new mongoose.Schema({
             ref: "enrolledClass"
         }]
     }
+}, {
+    versionKey: false
 })
 
 const model = mongoose.model('users', userSchema);

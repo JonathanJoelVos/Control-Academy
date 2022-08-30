@@ -1,8 +1,9 @@
 import actionsModel from "../model/Action.js";
 import papers from "../model/Paper.js";
+import disciplines from "../model/Discipline.js";
 
 class AdminController {
-    //actions
+    //actions ---------------------------------------------------- 
 
     static createAction = async (req, res) => {
         try {
@@ -34,7 +35,7 @@ class AdminController {
         }
     }
 
-    //Role (paper)
+    //Role (paper) ----------------------------------------
 
     static createPaper = async (req, res) => {
         try {
@@ -57,7 +58,7 @@ class AdminController {
     static addActionsInPapers = async (req, res) => {
         try {
             const { id } = req.params; //id do paper
-            const { name } = req.body; //name da action
+            const { name } = req.query; //name da action
             const checkPaper = await papers.findById(id);
             const checkAction = await actionsModel.find({ name: name })
             const idInString = checkAction[0]._id.toString();
@@ -84,6 +85,74 @@ class AdminController {
         } catch (error) {
             res.status(401).send(error)
         }
+    }
+
+    //discipline ----------------------------------------
+
+    static createDiscipline = async (req, res) => {
+        try {
+            const discipline = new disciplines(req.body);
+            await discipline.save();
+            res.send(discipline);
+        } catch (error) {
+            res.status(401).send(error)
+        }
+    }
+
+    static updateDiscipline = async (req, res) => {
+        try {
+            const { id } = req.params;
+            const teste = await disciplines.findByIdAndUpdate(id, { $set: req.body });
+            res.json("Atualizado com sucesso.");
+
+        } catch (error) {
+            res.status(401).send(error)
+        }
+    }
+
+    static removeDiscipline = async (req, res) => {
+        try {
+            const { id } = req.params;
+            const checkDiscipline = await disciplines.findById(id);
+            if (checkDiscipline) {
+                await disciplines.findByIdAndRemove(id);
+                res.send("Removido com sucesso");
+            } else {
+                res.status(401).send("Não foi possível remover")
+            }
+        } catch (error) {
+            res.status(401).send(error)
+        }
+    }
+
+    static listDisciplines = async (req, res) => {
+        try {
+            console.log(1)
+            const checkDiscipline = await disciplines.find();
+            console.log(checkDiscipline)
+            if (checkDiscipline) {
+                res.json(checkDiscipline);
+            } else {
+                res.status(401).send("Disciplina não funciona");
+            }
+        } catch (error) {
+            res.status(401).send(error);
+        }
+    }
+
+    static addClassInDisciplines = (req, res) => {
+        try {
+            const { name } = req.body;
+            const { id } = req.params;
+            const checkDiscipline = disciplines.findById(id);
+            if(checkDiscipline){
+                checkDiscipline.classes.
+            }
+        } catch (error) {
+            res.status(401).send(error);
+        }
+
+
     }
 }
 

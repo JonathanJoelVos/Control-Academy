@@ -19,6 +19,8 @@ const disciplineSchema = new mongoose.Schema({
             ref: "classes"
         }]
     }
+}, {
+    versionKey: false
 })
 
 const model = mongoose.model('disciplines', disciplineSchema);
