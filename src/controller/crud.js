@@ -1,5 +1,7 @@
 
 
+
+
 async function create(req, res, models) {
     try {
         const model = new models(req.body);
@@ -10,19 +12,19 @@ async function create(req, res, models) {
         res.status(404).send(error);
     }
 }
-async function readAndPopulate(res, model, populate = '',) {
+async function read(res, model, populate) {
     try {
-        const checkModel = await model.find().populate(`${populate}`);
-        res.status(201).json(checkModel);
-    } catch (error) {
-        res.status(404).send(error);
-    }
-}
-
-async function read(res, model) {
-    try {
-        const checkModel = await model.find();
-        res.status(201).json(checkModel);
+        let checkModel = await model.find();
+        const checkIfExistsPopulations = checkModel.every(element => { //MUDAR PARA VERIFICAR CADA UM
+            return element[populate].length > 0
+        });
+        if (checkIfExistsPopulations) {
+            checkModel = await model.find().populate(populate);
+            res.status(201).json(checkModel);
+        } else {
+            checkModel = await model.find();
+            res.status(201).json(checkModel);
+        }
     } catch (error) {
         res.status(404).send(error);
     }
@@ -51,6 +53,7 @@ async function remove(req, res, model) {
         } else {
             res.status(400).send("Erro ao remover");
         }
+        return checkExists;
     } catch (error) {
         res.status(404).send(error);
     }
@@ -60,8 +63,7 @@ const crud = {
     create,
     remove,
     read,
-    update,
-    readAndPopulate
+    update
 }
 
 export default crud;

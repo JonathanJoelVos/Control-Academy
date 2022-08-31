@@ -6,7 +6,7 @@ const createDiscipline = (req, res) => {
 }
 
 const readDisciplenes = (req, res) => {
-    crud.read(res, disciplines);
+    crud.read(res, disciplines, "classes");
 }
 
 const updateDiscipline = (req, res) => {

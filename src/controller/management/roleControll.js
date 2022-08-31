@@ -1,5 +1,5 @@
 import roles from '../../model/Role.js';
-import actions from '../../model/Action.js';
+import actionsModel from '../../model/Action.js';
 import crud from '../crud.js';
 
 const createRole = (req, res) => {
@@ -7,7 +7,7 @@ const createRole = (req, res) => {
 }
 
 const listRoles = (req, res) => {
-    crud.readAndPopulate(res, roles, "actions");
+    crud.read(res, roles, "actions");
 }
 
 const updateRoles = (req, res) => {
@@ -23,7 +23,7 @@ const addActionsInRoles = async (req, res) => {
         const { id } = req.params; //id da role
         const { action } = req.query; //name da action
         const checkRoles = await roles.findById(id);
-        const checkAction = await actions.find({ name: action });
+        const checkAction = await actionsModel.find({ name: action });
         const idInString = checkAction[0]._id.toString();
         const checkIfActionAlreadyExistsOnPaper = checkRoles
             .actions.every((element) => {

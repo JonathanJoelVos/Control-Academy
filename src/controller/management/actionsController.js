@@ -6,7 +6,7 @@ const createAction = (req, res) => {
 }
 
 const listActions = (req, res) => {
-    crud.read(res, actions);
+    crud.read(res, actions, 'methods');
 }
 
 const updateActions = (req, res) => {
