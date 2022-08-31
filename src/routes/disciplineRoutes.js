@@ -1,12 +1,14 @@
-/* import express from "express";
-import AdminController from "../controller/adminController.js";
+import express from "express";
+import AdminController from "../controller/users/adminController.js";
 
 const routes = express.Router();
+const controll = AdminController.disciplineControll;
 
 routes
-    .get("/discipline", AdminController.listDisciplines)
-    .post("/discipline/create", AdminController.createDiscipline)
-    .put("/discipline/update/:id", AdminController.updateDiscipline)
-    .delete("/discipline/delete/:id", AdminController.removeDiscipline)
+    .get("/disciplines", controll.readDisciplenes)
+    .post("/disciplines/create", controll.createDiscipline)
+    .put("/disciplines/update/:id", controll.updateDiscipline)
+    .delete("/disciplines/delete/:id", controll.deleteDiscipline)
+    .patch("/disciplines/classes/:id", controll.registerClassInDiscipline)
 
-export default routes; */
+export default routes;
