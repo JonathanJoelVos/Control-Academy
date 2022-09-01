@@ -1,17 +1,15 @@
 import mongoose from "mongoose";
 
 const enrolledClassSchema = new mongoose.Schema({
-    paper: {
+    role: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
         ref: 'roles'
     },
-    class: {
-        type: [{
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'classes'
-        }],
-        required: true
+    classGroup: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: 'classes'
     },
     finalGrade: {
         type: Number

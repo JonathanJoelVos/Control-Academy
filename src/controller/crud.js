@@ -14,17 +14,8 @@ async function create(req, res, models) {
 }
 async function read(res, model, populate) {
     try {
-        let checkModel = await model.find();
-        const checkIfExistsPopulations = checkModel.every(element => { //MUDAR PARA VERIFICAR CADA UM
-            return element[populate].length > 0
-        });
-        if (checkIfExistsPopulations) {
-            checkModel = await model.find().populate(populate);
-            res.status(201).json(checkModel);
-        } else {
-            checkModel = await model.find();
-            res.status(201).json(checkModel);
-        }
+        let checkModel = await model.find().populate(populate);
+        res.status(201).json(checkModel);
     } catch (error) {
         res.status(404).send(error);
     }

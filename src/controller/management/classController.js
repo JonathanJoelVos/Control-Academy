@@ -9,15 +9,46 @@ import crud from "../crud.js";
         element.classes.push(id);
         disciplene.save();
     });
-} */
+} 
+if (checkDiscipline.classes.length > 0) 
+else {
+            const classCreate = await crud.create(req, res, classes);
+            if (classCreate) {
+                const id = classCreate.discipline;
+                const disciplene = await disciplines.findById(id);
+                disciplene.classes.push(classCreate._id);
+                await disciplene.save();
+            }
+*/
 
 const createClass = async (req, res) => {
-    const classCreate = await crud.create(req, res, classes);
-    if (classCreate) {
-        const id = classCreate.discipline;
-        const disciplene = await disciplines.findById(id);
-        disciplene.classes.push(classCreate._id);
-        await disciplene.save();
+    try {
+        const { name } = req.body;
+        const { discipline } = req.body;
+        const checkDiscipline = await disciplines.findOne({ _id: discipline });
+        const array = checkDiscipline.classes.map(async (element) => {
+            const cu = await classes.findById({ _id: element });
+            console.log(cu);
+            return cu;
+        })
+        console.log(array)
+        const check = checkDiscipline.classes.every(async (element) => {
+            const classFind = await classes.findById({ _id: element });
+            console.log(classFind.name, name)
+            return name == classFind.name;
+        });
+        console.log(check)
+        if (check) {
+            const classCreate = await crud.create(req, res, classes);
+            const id = classCreate.discipline;
+            const disciplene = await disciplines.findById(id);
+            disciplene.classes.push(classCreate._id);
+            await disciplene.save();
+        } else {
+            res.status(400).send("Cu");
+        }
+    } catch (error) {
+        res.status(400).send(error);
     }
 }
 
@@ -30,16 +61,13 @@ const updateClass = (req, res) => {
 }
 
 const deleteClass = async (req, res) => {
-    const classRemoved = await crud.remove(req, res, classes);
-    if (classRemoved) {
-        const idClass = classRemoved._id;
-        const discipleneToRemovedClass = await disciplines.findById(classRemoved.discipline);
-        const index = discipleneToRemovedClass.classes.findIndex(element => {
-            return element.toString() == idClass.toString();
-        });
-        discipleneToRemovedClass.classes.splice(index, 1);
-        await discipleneToRemovedClass.save();
-    }
+    const classDelete = await crud.remove(req, res, classes);
+    const discipleneClass = await disciplines.findOne({ _id: classDelete.discipline });
+    const index = discipleneClass.classes.findIndex(element => {
+        return element.toString() == classDelete._id.toString()
+    })
+    discipleneClass.classes.splice(index, 1);
+    await discipleneClass.save();
 }
 
 
