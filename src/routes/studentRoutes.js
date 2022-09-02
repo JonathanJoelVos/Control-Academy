@@ -6,5 +6,6 @@ const controll = StudentController;
 routes
     .get("/student/:id", controll.viewAllFinalGradeAndFrequency)
     .get("/student/notes/:id", controll.viewFinalGradeAndFrequency)
+    .get("/students/enrolled/:id", controll.viewRegister)
 
 export default routes;
