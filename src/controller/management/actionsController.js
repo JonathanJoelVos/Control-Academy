@@ -5,8 +5,12 @@ const createAction = (req, res) => {
     crud.create(req, res, actions);
 }
 
-const listActions = (req, res) => {
+const readActions = (req, res) => {
     crud.read(res, actions, 'methods');
+}
+
+const readActionsById = (req, res) => {
+    crud.readById(req, res, actions);
 }
 
 const updateActions = (req, res) => {
@@ -56,7 +60,8 @@ const deleteMethodInActions = async (req, res) => {
 
 const actionController = {
     createAction,
-    listActions,
+    readActions,
+    readActionsById,
     updateActions,
     deleteActions,
     addMethodInActions,

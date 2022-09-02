@@ -1,7 +1,3 @@
-
-
-
-
 async function create(req, res, models) {
     try {
         const model = new models(req.body);
@@ -15,9 +11,27 @@ async function create(req, res, models) {
 async function read(res, model, populate) {
     try {
         let checkModel = await model.find().populate(populate);
-        res.status(201).json(checkModel);
+        if (checkModel) {
+            res.status(201).json(checkModel);
+        } else {
+            res.status(404).send("A solicitação não existe")
+        }
     } catch (error) {
         res.status(404).send(error);
+    }
+}
+
+async function readById(req, res, model) {
+    try {
+        const { id } = req.params;
+        const checkModel = await model.findById(id);
+        if (checkModel) {
+            res.status(201).json(checkModel);
+        } else {
+            res.status(404).send("A solicitação não existe")
+        }
+    } catch (error) {
+        res.status(400).send(error);
     }
 }
 
@@ -26,7 +40,7 @@ async function update(req, res, model) {
         const { id } = req.params;
         const checkExists = await model.findByIdAndUpdate(id, { $set: req.body });
         if (checkExists) {
-            res.status(201).send("Update feito com sucesso");
+            res.status(201).send("Tu é muito burro");
         } else {
             res.status(404).send("Não encontrada");
         }
@@ -54,7 +68,8 @@ const crud = {
     create,
     remove,
     read,
-    update
+    update,
+    readById
 }
 
 export default crud;

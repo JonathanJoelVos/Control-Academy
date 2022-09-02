@@ -24,10 +24,10 @@ const classSchema = new mongoose.Schema({
         }],
         required: true
     },
-    discipline: {
+    subject: {
         required: true,
         type: mongoose.Schema.Types.ObjectId,
-        ref: "disciplines"
+        ref: "subjects"
     }
 
 }, {

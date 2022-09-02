@@ -23,6 +23,6 @@ const disciplineSchema = new mongoose.Schema({
     versionKey: false
 })
 
-const model = mongoose.model('disciplines', disciplineSchema);
+const model = mongoose.model('subjects', disciplineSchema);
 
 export default model;
