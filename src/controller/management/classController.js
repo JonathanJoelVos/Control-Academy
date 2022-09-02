@@ -26,18 +26,12 @@ const createClass = async (req, res) => {
         const { name } = req.body;
         const { discipline } = req.body;
         const checkDiscipline = await disciplines.findOne({ _id: discipline });
-        const array = checkDiscipline.classes.map(async (element) => {
-            const cu = await classes.findById({ _id: element });
-            console.log(cu);
-            return cu;
-        })
-        console.log(array)
-        const check = checkDiscipline.classes.every(async (element) => {
-            const classFind = await classes.findById({ _id: element });
-            console.log(classFind.name, name)
-            return name == classFind.name;
-        });
-        console.log(check)
+        const array = [];
+        for (let i = 0; i < checkDiscipline.classes.length; i++) {
+            const classFind = await classes.findById({ _id: checkDiscipline.classes[i] });
+            array.push(classFind)
+        }
+        const check = array.every(element => element.name != name);
         if (check) {
             const classCreate = await crud.create(req, res, classes);
             const id = classCreate.discipline;
