@@ -1,6 +1,11 @@
 import mongoose from "mongoose";
 
 const enrolledClassSchema = new mongoose.Schema({
+    idUser: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: 'users'
+    },
     role: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,

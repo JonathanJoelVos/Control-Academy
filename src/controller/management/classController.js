@@ -39,7 +39,7 @@ const createClass = async (req, res) => {
             disciplene.classes.push(classCreate._id);
             await disciplene.save();
         } else {
-            res.status(400).send("Cu");
+            res.status(400).send("Turma já existe.");
         }
     } catch (error) {
         res.status(400).send(error);
@@ -56,12 +56,14 @@ const updateClass = (req, res) => {
 
 const deleteClass = async (req, res) => {
     const classDelete = await crud.remove(req, res, classes);
-    const discipleneClass = await disciplines.findOne({ _id: classDelete.discipline });
-    const index = discipleneClass.classes.findIndex(element => {
-        return element.toString() == classDelete._id.toString()
-    })
-    discipleneClass.classes.splice(index, 1);
-    await discipleneClass.save();
+    if (classDelete) {
+        const discipleneClass = await disciplines.findOne({ _id: classDelete.discipline });
+        const index = discipleneClass.classes.findIndex(element => {
+            return element.toString() == classDelete._id.toString()
+        })
+        discipleneClass.classes.splice(index, 1);
+        await discipleneClass.save();
+    }
 }
 
 
