@@ -9,6 +9,5 @@ routes
     .post("/disciplines/create", controll.createDiscipline)
     .put("/disciplines/update/:id", controll.updateDiscipline)
     .delete("/disciplines/delete/:id", controll.deleteDiscipline)
-    .patch("/disciplines/classes/:id", controll.registerClassInDiscipline)
 
 export default routes;

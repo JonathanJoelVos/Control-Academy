@@ -51,9 +51,28 @@ const updateEnrolled = (req, res) => {
     crud.update(req, res, enrolledClass);
 }
 
+
+//pegar o que foi removido 
+//procurar nos matriculados da turma e remover o id matriculado
+//pegar o id do user e tirar as disciplinas que ele ta matrículado
+
 const deleteEnrolled = async (req, res) => {
-    const enrolledRemove = await 
-    crud.remove(req, res, enrolledClass);
+    const enrolledRemove = await crud.remove(req, res, enrolledClass);
+    if (enrolledRemove) {
+        const idUser = enrolledRemove.idUser._id;
+        const classGroup = enrolledRemove.classGroup._id;
+        const classFind = await classes.findById(classGroup);
+        const indexClass = classFind.enrolled.findIndex(element => element == classGroup);
+        classFind.enrolled.splice(indexClass, 1);
+        await classFind.save()
+        const userFind = await users.findById(idUser)
+        const indexUser = userFind.register.findIndex(element => {
+            return element.toString() == enrolledRemove._id.toString();
+        });
+        userFind.register.splice(indexUser, 1);
+        await userFind.save();
+    }
+
 }
 
 const enrolledControll = {
@@ -63,4 +82,4 @@ const enrolledControll = {
     updateEnrolled
 }
 
-export default enrolledControll;
+export default enrolledControll;  

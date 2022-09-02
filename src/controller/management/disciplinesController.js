@@ -18,30 +18,11 @@ const deleteDiscipline = (req, res) => {
 }
 
 
-const registerClassInDiscipline = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const { as } = req.headers;
-        const checkDisciplines = await disciplines.find({ name: classes });
-        if (checkDisciplines) {
-            checkDisciplines.forEach(async (element) => {
-                element.classes.push(id);
-                await disciplines.save();
-            })
-        } else {
-            res.status(401).send("Erro ao cadastrar disciplina");
-        }
-    } catch (err) {
-        res.status(401).send(err);
-    }
-}
-
 const disciplineControll = {
     createDiscipline,
     readDisciplenes,
     deleteDiscipline,
-    updateDiscipline,
-    registerClassInDiscipline
+    updateDiscipline
 }
 
 export default disciplineControll;

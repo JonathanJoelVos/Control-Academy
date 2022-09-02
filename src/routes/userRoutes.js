@@ -9,6 +9,7 @@ routes
     .post("/users/create", controll.createUser)
     .put("/users/update/:id", controll.updateUser)
     .delete("/users/delete/:id", controll.deleteUser)
+    .post("/users/login", controll.loginUser)
 
 
 export default routes;

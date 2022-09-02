@@ -44,9 +44,9 @@ const addActionsInRoles = async (req, res) => {
 const deleteActionsInRoles = async (req, res) => {
     try {
         const { role } = req.query;
-        const { action: actionID } = req.body;
+        const { id } = req.params;
         const roleFind = await roles.findOne({ name: role });
-        const checkIfActionExists = roleFind.actions.findIndex(element => element.toString() == actionID)
+        const checkIfActionExists = roleFind.actions.indexOf(id);
         if (checkIfActionExists != -1) {
             roleFind.actions.splice(checkIfActionExists, 1);
             await roleFind.save();

@@ -4,7 +4,9 @@ import roles from "../routes/roleRoutes.js";
 import actions from "../routes/actionRoutes.js";
 import disciplines from "../routes/disciplineRoutes.js";
 import classes from "../routes/classRoutes.js";
-import enrolled from "../routes/enrolledClassRoutes.js"
+import enrolled from "../routes/enrolledClassRoutes.js";
+import student from '../routes/studentRoutes.js';
+import professores from "../routes/professorRoutes.js";
 
 const routes = (app) => {
     app.route("/").get((req, res) => {
@@ -18,7 +20,9 @@ const routes = (app) => {
         actions,
         disciplines,
         classes,
-        enrolled
+        enrolled,
+        student,
+        professores
     )
 }
 

@@ -2,25 +2,6 @@ import classes from "../../model/Class.js";
 import disciplines from '../../model/Discipline.js';
 import crud from "../crud.js";
 
-/* const insertClassInDiscipline = async (id, model) => {
-    await model.findById(id);
-    console.log(disciplene)
-    disciplene.forEach(element => {
-        element.classes.push(id);
-        disciplene.save();
-    });
-} 
-if (checkDiscipline.classes.length > 0) 
-else {
-            const classCreate = await crud.create(req, res, classes);
-            if (classCreate) {
-                const id = classCreate.discipline;
-                const disciplene = await disciplines.findById(id);
-                disciplene.classes.push(classCreate._id);
-                await disciplene.save();
-            }
-*/
-
 const createClass = async (req, res) => {
     try {
         const { name } = req.body;
