@@ -18,7 +18,7 @@ const createEnrolled = async (req, res) => {
         }
         const checkIfUserEnrolledInClass = arrayEnrolleds.some(element => {
             return element.idUser.toString() == idUser.toString();
-        })
+        });
         if (checkIfUserEnrolledInClass) return res.status(404).send("CPF já está nessa turma");
         const enrolled = await crud.create(req, res, enrolledClass);
         if (enrolled) {

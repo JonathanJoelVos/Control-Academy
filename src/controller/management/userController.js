@@ -1,6 +1,7 @@
 import users from "../../model/User.js";
 import bcrypt from "bcrypt";
 import crud from "../crud.js";
+import jwt from "jsonwebtoken";
 
 //fazer a logica de aparecer os papeis no front (aparecer só os existentes)
 
@@ -10,6 +11,7 @@ const createUser = async (req, res) => {
     if (user) {
         const newPassword = bcrypt.hashSync(user.password, salt);
         user.password = newPassword;
+        user.authKey = "";
         await user.save();
     }
 }
@@ -28,14 +30,14 @@ const deleteUser = (req, res) => {
 const loginUser = async (req, res) => {
     try {
         const { cpf, password } = req.body;
-        const checkUser = await users.find({ cpf: cpf });
-        const passwordCheck = bcrypt.compareSync(password, checkUser[0].password);
-
-        if (passwordCheck) {
-            res.send(`Logado`);
-        } else {
-            res.status(400).send("Email ou senha incorretos")
-        }
+        const checkUser = await users.findOne({ cpf: cpf });
+        const passwordCheck = bcrypt.compareSync(password, checkUser.password);
+        if (!passwordCheck) return res.status(400).send("Email ou senha incorretosss");
+        const payload = { id: checkUser._id, cpf: checkUser.cpf }
+        const token = jwt.sign(payload, process.env.TOKEN_SECRET);
+        res.header('Authorization', token);
+        const userUpdate = await users.findByIdAndUpdate(checkUser._id, { authKey: token })
+        res.status(200).send(userUpdate);
     } catch (err) {
         res.status(400).send("Email ou senha incorretoss");
     }
