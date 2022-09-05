@@ -5,30 +5,21 @@ import crud from "../crud.js";
 const createClass = async (req, res) => {
     try {
         const { name } = req.body;
-        console.log(1)
         const { subject } = req.body;
         const checkSubject = await subjects.findOne({ _id: subject });
-        if (checkSubject) {
-            const array = [];
-            for (let i = 0; i < checkSubject.classes.length; i++) {
-                const classFind = await classes.findById({ _id: checkSubject.classes[i] });
-                array.push(classFind)
-            }
-            const check = array.every(element => element.name != name);
-            if (check) {
-                console.log(1)
-                const classCreate = await crud.create(req, res, classes);
-                const id = classCreate.subject;
-                console.log(id);
-                const subject = await subjects.findById(id);
-                subject.classes.push(classCreate._id);
-                await subject.save();
-            } else {
-                res.status(400).send("Turma já existe.");
-            }
-        } else {
-            res.status(404).send("Disciplina não existe")
+        if (!checkSubject) return res.status(404).send("Disciplina não existe");
+        const array = [];
+        for (let i = 0; i < checkSubject.classes.length; i++) {
+            const classFind = await classes.findById({ _id: checkSubject.classes[i] });
+            array.push(classFind)
         }
+        const check = array.every(element => element.name != name);
+        if (!check) return res.status(400).send("Turma já existe.");
+        const classCreate = await crud.create(req, res, classes);
+        const id = classCreate.subject;
+        const subjectFind = await subjects.findById(id);
+        subjectFind.classes.push(classCreate._id);
+        await subjectFind.save();
     } catch (error) {
         res.status(400).send(error);
     }
@@ -55,9 +46,6 @@ const deleteClass = async (req, res) => {
         }
     }
 }
-
-
-
 
 const classControll = {
     createClass,

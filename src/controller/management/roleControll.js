@@ -29,13 +29,10 @@ const addActionsInRoles = async (req, res) => {
             .actions.every((element) => {
                 return element != idInString;
             });
-        if (checkIfActionAlreadyExistsOnPaper) {
-            checkRoles.actions.push(checkAction[0]._id);
-            await checkRoles.save();
-            res.send("Ação adicionada com sucesso");
-        } else {
-            res.status(400).send("Ação ou papel inexistente, ou papel já possui essa ação");
-        }
+        if (!checkIfActionAlreadyExistsOnPaper) return res.status(400).send("Ação ou papel inexistente, ou papel já possui essa ação");
+        checkRoles.actions.push(checkAction[0]._id);
+        await checkRoles.save();
+        res.send("Ação adicionada com sucesso");
     } catch (error) {
         res.status(400).send(error)
     }
@@ -47,13 +44,10 @@ const deleteActionsInRoles = async (req, res) => {
         const { id } = req.params;
         const roleFind = await roles.findOne({ name: role });
         const checkIfActionExists = roleFind.actions.indexOf(id);
-        if (checkIfActionExists != -1) {
-            roleFind.actions.splice(checkIfActionExists, 1);
-            await roleFind.save();
-            res.send("Removido com sucesso");
-        } else {
-            res.status(401).send("método não existente");
-        }
+        if (checkIfActionExists == -1) return res.status(401).send("método não existente");
+        roleFind.actions.splice(checkIfActionExists, 1);
+        await roleFind.save();
+        res.send("Removido com sucesso");
     } catch (error) {
         res.status(401).send(error);
     }

@@ -8,30 +8,24 @@ const createEnrolled = async (req, res) => {
         const { idUser, classGroup } = req.body;
         const user = await users.findById(idUser);
         const classFind = await classes.findById(classGroup);
-        if (classFind) {
-            const arrayEnrolleds = [];
-            for (let i = 0; i < classFind.enrolled.length; i++) {
-                const enrolledFind = await enrolledClass.findById(classFind.enrolled[i]);
-                if (enrolledFind) {
-                    arrayEnrolleds.push(enrolledFind);
-                }
+        if (!classFind) return res.status(404).send("Turma não existe");
+        const arrayEnrolleds = [];
+        for (let i = 0; i < classFind.enrolled.length; i++) {
+            const enrolledFind = await enrolledClass.findById(classFind.enrolled[i]);
+            if (enrolledFind) {
+                arrayEnrolleds.push(enrolledFind);
             }
-            const checkIfUserEnrolledInClass = arrayEnrolleds.some(element => {
-                return element.idUser.toString() == idUser.toString();
-            })
-            if (!checkIfUserEnrolledInClass) {
-                const enrolled = await crud.create(req, res, enrolledClass);
-                if (enrolled) {
-                    user.register.push(enrolled._id);
-                    await user.save();
-                    classFind.enrolled.push(enrolled._id);
-                    await classFind.save();
-                }
-            } else {
-                res.status(404).send("CPF já está nessa turma");
-            }
-        } else {
-            res.status(404).send("Turma não existe")
+        }
+        const checkIfUserEnrolledInClass = arrayEnrolleds.some(element => {
+            return element.idUser.toString() == idUser.toString();
+        })
+        if (checkIfUserEnrolledInClass) return res.status(404).send("CPF já está nessa turma");
+        const enrolled = await crud.create(req, res, enrolledClass);
+        if (enrolled) {
+            user.register.push(enrolled._id);
+            await user.save();
+            classFind.enrolled.push(enrolled._id);
+            await classFind.save();
         }
     } catch (error) {
         res.status(400).send(error);
@@ -50,11 +44,6 @@ const readEnrolled = async (req, res) => {
 const updateEnrolled = (req, res) => {
     crud.update(req, res, enrolledClass);
 }
-
-
-//pegar o que foi removido 
-//procurar nos matriculados da turma e remover o id matriculado
-//pegar o id do user e tirar as disciplinas que ele ta matrículado
 
 const deleteEnrolled = async (req, res) => {
     const enrolledRemove = await crud.remove(req, res, enrolledClass);

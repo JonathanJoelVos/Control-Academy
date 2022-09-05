@@ -25,16 +25,12 @@ const addMethodInActions = async (req, res) => {
     try {
         const { name } = req.query;
         const { method } = req.body;
-        console.log('1')
         const actionFind = await actions.findOne({ name: name });
-        const checkIfMethodsExists = actionFind.methods.every(element => element != method)
-        if (checkIfMethodsExists) {
-            actionFind.methods.push(method);
-            await actionFind.save();
-            res.send("Adicionado com sucesso");
-        } else {
-            res.status(401).send("método já existente");
-        }
+        const checkIfMethodsNotExists = actionFind.methods.every(element => element != method);
+        if (!checkIfMethodsNotExists) return res.status(401).send("método já existente");
+        actionFind.methods.push(method);
+        await actionFind.save();
+        res.send("Adicionado com sucesso");
     } catch (error) {
         res.status(401).send(error);
     }
@@ -46,13 +42,10 @@ const deleteMethodInActions = async (req, res) => {
         const { method } = req.body;
         const actionFind = await actions.findOne({ name: name });
         const checkIfMethodsExists = actionFind.methods.findIndex(element => element == method)
-        if (checkIfMethodsExists != -1) {
-            actionFind.methods.splice(checkIfMethodsExists, 1);
-            await actionFind.save();
-            res.send("Removido com sucesso");
-        } else {
-            res.status(401).send("método não existente");
-        }
+        if (checkIfMethodsExists == -1) return res.status(401).send("método não existente");
+        actionFind.methods.splice(checkIfMethodsExists, 1);
+        await actionFind.save();
+        res.send("Removido com sucesso");
     } catch (error) {
         res.status(401).send(error);
     }

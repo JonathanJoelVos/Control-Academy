@@ -6,11 +6,8 @@ class ProfessorController {
             const { id } = req.params;
             const { finalGrade, frequency } = req.body;
             const checkExists = await enrolledClass.findByIdAndUpdate(id, { finalGrade: finalGrade, frequency: frequency });
-            if (checkExists) {
-                res.status(201).send("Update feito com sucesso");
-            } else {
-                res.status(404).send("Não encontrada");
-            }
+            if (!checkExists) return res.status(404).send("Não encontrada");
+            res.status(201).send("Update feito com sucesso");
         } catch (error) {
             res.status(404).send(error.message);
         }

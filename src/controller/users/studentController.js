@@ -8,15 +8,12 @@ class StudentController {
         const { id } = req.params;
         const user = await users.findById(id);
         const arrayUserEnrolledsClass = [];
-        if (user) {
-            for (let i = 0; i < user.register.length; i++) {
-                const findEnrolledClass = await enrolledClass.findById(user.register[i]).populate("classGroup").populate("role");
-                arrayUserEnrolledsClass.push(findEnrolledClass);
-            }
-            res.send(arrayUserEnrolledsClass);
-        } else {
-            res.status(404).send("Erro")
+        if (!user) return res.status(404).send("Erro");
+        for (let i = 0; i < user.register.length; i++) {
+            const findEnrolledClass = await enrolledClass.findById(user.register[i]).populate("classGroup").populate("role");
+            arrayUserEnrolledsClass.push(findEnrolledClass);
         }
+        res.send(arrayUserEnrolledsClass);
     }
 
     static viewFinalGradeAndFrequency = async (req, res) => {
@@ -25,18 +22,16 @@ class StudentController {
             const { name } = req.query; // name da turma
             const user = await users.findById(id);
             const arrayUserEnrolledsClass = [];
-            if (user) {
-                for (let i = 0; i < user.register.length; i++) {
-                    const findEnrolledClass = await enrolledClass.findById(user.register[i]).populate("classGroup").populate("role");
-                    arrayUserEnrolledsClass.push(findEnrolledClass);
-                }
-                const newArray = arrayUserEnrolledsClass.filter((element) => {
-                    return element.classGroup.name == name;
-                })
-                res.send(newArray);
-            } else {
-                res.status(404).send("Erro")
+            if (!user) return res.status(404).send("Erro");
+            for (let i = 0; i < user.register.length; i++) {
+                const findEnrolledClass = await enrolledClass.findById(user.register[i]).populate("classGroup").populate("role");
+                arrayUserEnrolledsClass.push(findEnrolledClass);
             }
+            const newArray = arrayUserEnrolledsClass.filter((element) => {
+                return element.classGroup.name == name;
+            })
+            res.send(newArray);
+
         } catch (error) {
             res.status(400).send(error);
         }
