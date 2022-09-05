@@ -1,5 +1,6 @@
 import dotenv from 'dotenv';
 import app from "./src/app.js";
+import redis from "./redis/blacklist.js";
 
 dotenv.config();
 const port = process.env.PORT || 3333;

@@ -32,11 +32,13 @@ const loginUser = async (req, res) => {
         const { cpf, password } = req.body;
         const checkUser = await users.findOne({ cpf: cpf });
         const passwordCheck = bcrypt.compareSync(password, checkUser.password);
-        if (!passwordCheck) return res.status(400).send("Email ou senha incorretosss");
-        const payload = { id: checkUser._id, cpf: checkUser.cpf }
-        const token = jwt.sign(payload, process.env.TOKEN_SECRET);
+        if (!passwordCheck) return res.status(400).send("Email ou senha incorretos");
+        const payload = { id: checkUser._id, cpf: checkUser.cpf };
+        const token = jwt.sign(payload, process.env.TOKEN_SECRET, { expiresIn: "60s" });
         res.header('Authorization', token);
-        const userUpdate = await users.findByIdAndUpdate(checkUser._id, { authKey: token })
+        const userUpdate = await users.findByIdAndUpdate(checkUser._id, {
+            authKey: token
+        })
         res.status(200).send(userUpdate);
     } catch (err) {
         res.status(400).send("Email ou senha incorretoss");
