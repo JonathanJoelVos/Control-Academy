@@ -11,11 +11,8 @@ async function create(req, res, models) {
 async function read(res, model, populate) {
     try {
         let checkModel = await model.find().populate(populate);
-        if (checkModel) {
-            res.status(201).json(checkModel);
-        } else {
-            res.status(404).send("A solicitação não existe")
-        }
+        if (!checkModel) return res.status(404).send("A solicitação não existe");
+        res.status(201).json(checkModel);
     } catch (error) {
         res.status(404).send(error);
     }
@@ -39,6 +36,7 @@ async function update(req, res, model) {
     try {
         const { id } = req.params;
         const checkExists = await model.findByIdAndUpdate(id, { $set: req.body });
+
         if (checkExists) {
             res.status(201).send("Tu é muito burro");
         } else {
