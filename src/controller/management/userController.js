@@ -2,6 +2,7 @@ import users from "../../model/User.js";
 import bcrypt from "bcrypt";
 import crud from "../crud.js";
 import jwt from "jsonwebtoken";
+import blacklist from "../../../redis/manipulation-blacklist.js";
 
 //fazer a logica de aparecer os papeis no front (aparecer só os existentes)
 
@@ -34,7 +35,7 @@ const loginUser = async (req, res) => {
         const passwordCheck = bcrypt.compareSync(password, checkUser.password);
         if (!passwordCheck) return res.status(400).send("Email ou senha incorretos");
         const payload = { id: checkUser._id, cpf: checkUser.cpf };
-        const token = jwt.sign(payload, process.env.TOKEN_SECRET, { expiresIn: "60s" });
+        const token = jwt.sign(payload, process.env.TOKEN_SECRET, { expiresIn: "15m" });
         res.header('Authorization', token);
         const userUpdate = await users.findByIdAndUpdate(checkUser._id, {
             authKey: token
@@ -44,12 +45,23 @@ const loginUser = async (req, res) => {
         res.status(400).send("Email ou senha incorretoss");
     }
 }
+
+const logoutUser = async (req, res) => {
+    try {
+        const token = req.token;
+        await blacklist.addTokenInBlacklist(token);
+        res.send("logout feito")
+    } catch (error) {
+        res.status(400).send(error)
+    }
+}
 const userControll = {
     createUser,
     updateUser,
     readUser,
     deleteUser,
-    loginUser
+    loginUser,
+    logoutUser
 }
 
 

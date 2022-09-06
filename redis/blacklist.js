@@ -1,3 +1,6 @@
 import redis from 'redis';
 
-export default redis.createClient({ prefix: 'blacklist:' });
+const redisCheck = redis.createClient({ prefix: "blacklist:" });
+await redisCheck.connect();
+
+export default redisCheck;
