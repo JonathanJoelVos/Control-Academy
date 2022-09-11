@@ -15,7 +15,7 @@ async function addTokenInBlacklist(token) {
 
 async function verifyIfTokenExistsInBlacklist(token) {
     const tokenHash = generatorTokenHash(token);
-    const result = await cache.exists(tokenHash);
+    const result = await cache.exists(tokenHash); //return 1 or 0
     if (!result) {
         return false;
     } else {

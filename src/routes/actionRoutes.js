@@ -6,12 +6,12 @@ const routes = express.Router();
 const controll = AdminController.actionControll;
 
 routes
-    .get("/actions", auth, controll.readActions)
-    .get("/actions/:id", auth, controll.readActionsById)
-    .post("/actions/create", auth, controll.createAction)
-    .put("/actions/update/:id", auth, controll.updateActions)
-    .patch("/actions/methods", auth, controll.addMethodInActions)
-    .delete("/actions/delete/:id", auth, controll.deleteActions)
-    .delete("/actions/methods/delete", auth, controll.deleteMethodInActions)
+    .get("/actions", controll.readActions)
+    .get("/actions/:id", controll.readActionsById)
+    .post("/actions/create", controll.createAction)
+    .put("/actions/update/:id", controll.updateActions)
+    .patch("/actions/methods", controll.addMethodInActions)
+    .delete("/actions/delete/:id", controll.deleteActions)
+    .delete("/actions/methods/delete", controll.deleteMethodInActions)
 
 export default routes;

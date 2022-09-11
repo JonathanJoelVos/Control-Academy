@@ -36,9 +36,6 @@ const userSchema = new mongoose.Schema({
             ref: "enrolledClass"
         }]
     },
-    authKey: {
-        type: String
-    }
 }, {
     versionKey: false
 })

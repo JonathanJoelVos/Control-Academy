@@ -2,20 +2,33 @@ import roles from '../../model/Role.js';
 import actionsModel from '../../model/Action.js';
 import crud from '../crud.js';
 
-const createRole = (req, res) => {
-    crud.create(req, res, roles);
+const createRole = async (req, res) => {
+    const body = req.body;
+    const checkResponse = await crud.create(body, roles);
+    if (checkResponse.message) return res.status(401).send(checkResponse.message);
+    res.status(201).send(body);
 }
 
-const listRoles = (req, res) => {
-    crud.read(res, roles, "actions");
+const listRoles = async (req, res) => {
+    const checkResponse = await crud.read(roles, 'actions');
+    if (checkResponse.message) return res.status(400).send(checkResponse.message);
+    res.status(200).send(checkResponse);
+
 }
 
-const updateRoles = (req, res) => {
-    crud.update(req, res, roles);
+const updateRoles = async (req, res) => {
+    const { id } = req.params;
+    const body = req.body;
+    const check = await crud.update(id, body, roles);
+    if (check.message) return res.status(401).send(check.message);
+    res.status(204).send("Update feito com sucesso");
 }
 
-const deleteRoles = (req, res) => {
-    crud.remove(req, res, roles);
+const deleteRoles = async (req, res) => {
+    const { id } = req.params;
+    const check = await crud.remove(id, roles);
+    if (check.message) return res.status(404).send(check.message);
+    res.status(204).send("Removido com sucesso");
 }
 
 const addActionsInRoles = async (req, res) => {

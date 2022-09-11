@@ -5,6 +5,7 @@ import classes from "../../model/Class.js";
 
 const createEnrolled = async (req, res) => {
     try {
+        const bodyUse = req.body;
         const { idUser, classGroup } = req.body;
         const user = await users.findById(idUser);
         const classFind = await classes.findById(classGroup);
@@ -20,13 +21,12 @@ const createEnrolled = async (req, res) => {
             return element.idUser.toString() == idUser.toString();
         });
         if (checkIfUserEnrolledInClass) return res.status(404).send("CPF já está nessa turma");
-        const enrolled = await crud.create(req, res, enrolledClass);
-        if (enrolled) {
-            user.register.push(enrolled._id);
-            await user.save();
-            classFind.enrolled.push(enrolled._id);
-            await classFind.save();
-        }
+        const enrolled = await crud.create(bodyUse, enrolledClass);
+        if (enrolled.message) return res.status(404).send(enrolled.message);
+        user.register.push(enrolled._id);
+        await user.save();
+        classFind.enrolled.push(enrolled._id);
+        await classFind.save();
     } catch (error) {
         res.status(400).send(error);
     }
@@ -41,27 +41,31 @@ const readEnrolled = async (req, res) => {
     }
 }
 
-const updateEnrolled = (req, res) => {
-    crud.update(req, res, enrolledClass);
+const updateEnrolled = async (req, res) => {
+    const { id } = req.params;
+    const body = req.body;
+    const check = await crud.update(id, body, enrolledClass);
+    if (check.message) return res.status(401).send(check.message);
+    res.status(204).send("Update feito com sucesso");
 }
 
 const deleteEnrolled = async (req, res) => {
-    const enrolledRemove = await crud.remove(req, res, enrolledClass);
-    if (enrolledRemove) {
-        const idUser = enrolledRemove.idUser._id;
-        const classGroup = enrolledRemove.classGroup._id;
-        const classFind = await classes.findById(classGroup);
-        const indexClass = classFind.enrolled.findIndex(element => element == classGroup);
-        classFind.enrolled.splice(indexClass, 1);
-        await classFind.save()
-        const userFind = await users.findById(idUser)
-        const indexUser = userFind.register.findIndex(element => {
-            return element.toString() == enrolledRemove._id.toString();
-        });
-        userFind.register.splice(indexUser, 1);
-        await userFind.save();
-    }
-
+    const { id } = req.params;
+    const check = await crud.remove(id, enrolledClass);
+    if (check.message) return res.status(404).send(check.message);
+    res.status(204).send("Removido com sucesso");
+    const idUser = check.idUser._id;
+    const classGroup = check.classGroup._id;
+    const classFind = await classes.findById(classGroup);
+    const indexClass = classFind.enrolled.findIndex(element => element == classGroup);
+    classFind.enrolled.splice(indexClass, 1);
+    await classFind.save()
+    const userFind = await users.findById(idUser)
+    const indexUser = userFind.register.findIndex(element => {
+        return element.toString() == check._id.toString();
+    });
+    userFind.register.splice(indexUser, 1);
+    await userFind.save();
 }
 
 const enrolledControll = {
