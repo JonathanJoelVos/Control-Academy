@@ -36,10 +36,18 @@ const createEnrolled = async (req, res) => {
 const readEnrolled = async (req, res) => {
     try {
         let checkModel = await enrolledClass.find().populate("role").populate("classGroup").populate("idUser");
-        res.status(201).json(checkModel);
+        res.status(200).json(checkModel);
     } catch (error) {
         res.status(404).send(error);
     }
+}
+
+const readEnrolledById = async (req, res) => {
+    const { id } = req.params;
+    const checkResponse = await crud.readById(id, enrolledClass);
+    if (checkResponse.message == 'não encontrado') return res.status(404).send(checkResponse.message);
+    if (checkResponse.error) return res.status(400).send(checkResponse.error)
+    res.status(200).json(checkResponse);
 }
 
 const updateEnrolled = async (req, res) => {
@@ -72,6 +80,7 @@ const deleteEnrolled = async (req, res) => {
 const enrolledControll = {
     createEnrolled,
     readEnrolled,
+    readEnrolledById,
     deleteEnrolled,
     updateEnrolled
 }

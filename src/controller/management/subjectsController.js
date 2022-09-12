@@ -3,8 +3,9 @@ import crud from '../crud.js';
 
 const createSubject = async (req, res) => {
     const body = req.body;
+    if (!body.name) return res.status(400).send("Corpo da requisição incorreto");
     const checkResponse = await crud.create(body, subjects);
-    if (checkResponse.message) return res.status(401).send(checkResponse.message);
+    if (checkResponse.message) return res.status(400).send(checkResponse.message);
     res.status(201).send(checkResponse);
 }
 
@@ -26,7 +27,7 @@ const updateSubject = async (req, res) => {
     const { id } = req.params;
     const body = req.body;
     const check = await crud.update(id, body, subjects);
-    if (check.message) return res.status(401).send(check.message);
+    if (check.message) return res.status(404).send(check.message);
     res.status(204).send("Update feito com sucesso");
 }
 

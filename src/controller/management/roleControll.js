@@ -4,8 +4,9 @@ import crud from '../crud.js';
 
 const createRole = async (req, res) => {
     const body = req.body;
+    if (!body.name) return res.status(400).send("Corpo da requisição incorreto");
     const checkResponse = await crud.create(body, roles);
-    if (checkResponse.message) return res.status(401).send(checkResponse.message);
+    if (checkResponse.message) return res.status(400).send(checkResponse.message);
     res.status(201).send(checkResponse);
 }
 
@@ -16,13 +17,21 @@ const listRoles = async (req, res) => {
 
 }
 
-const updateRoles = async (req, res) => {
+const readRolesById = async (req, res) => {
+    const { id } = req.params;
+    const checkResponse = await crud.readById(id, roles);
+    if (checkResponse.message == 'não encontrado') return res.status(404).send(checkResponse.message);
+    if (checkResponse.error) return res.status(400).send(checkResponse.error)
+    res.status(200).json(checkResponse);
+}
+
+/* const updateRoles = async (req, res) => {
     const { id } = req.params;
     const body = req.body;
     const check = await crud.update(id, body, roles);
     if (check.message) return res.status(401).send(check.message);
     res.status(204).send("Update feito com sucesso");
-}
+} */
 
 const deleteRoles = async (req, res) => {
     const { id } = req.params;
@@ -70,7 +79,8 @@ const deleteActionsInRoles = async (req, res) => {
 const roleControll = {
     createRole,
     listRoles,
-    updateRoles,
+    readRolesById,
+    /* updateRoles, */
     deleteRoles,
     addActionsInRoles,
     deleteActionsInRoles

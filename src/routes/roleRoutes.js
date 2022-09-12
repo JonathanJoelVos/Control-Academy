@@ -6,6 +6,7 @@ const controll = AdminController.roleControll;
 
 routes
     .get("/roles", controll.listRoles)
+    .get("/roles/:id", controll.readRolesById)
     .post("/roles/create", controll.createRole)
     /* .put("/roles/update/:id", controll.updateRoles) não deixa editar para evitar problema*/
     .patch("/roles/actions/:id", controll.addActionsInRoles)

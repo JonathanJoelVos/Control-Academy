@@ -18,7 +18,7 @@ describe('Routes Actions', () => {
         methods: ["teste"]
     }
 
-    it('Deve retornar de /actions', async () => {
+    it('Deve retornar de /actions', async () => { 
         const retorno = await request(app)
             .get("/actions")
             .expect(200)

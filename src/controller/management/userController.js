@@ -8,13 +8,13 @@ import blacklist from "../../../redis/manipulation-blacklist.js";
 
 const createUser = async (req, res) => {
     const body = req.body;
+    if (!body.name) return res.status(400).send("Corpo da requisição incorreto");
     const salt = bcrypt.genSaltSync(12);
     const user = await crud.create(body, users);
-    if (user.message) return res.status(401).send(user.message)
+    if (user.message) return res.status(400).send(user.message)
     res.status(201).send(user);
     const newPassword = bcrypt.hashSync(user.password, salt);
     user.password = newPassword;
-    user.authKey = "";
     await user.save();
 }
 
@@ -24,11 +24,19 @@ const readUser = async (req, res) => {
     res.status(200).send(checkResponse);
 }
 
+const readUsersById = async (req, res) => {
+    const { id } = req.params;
+    const checkResponse = await crud.readById(id, users);
+    if (checkResponse.message == 'não encontrado') return res.status(404).send(checkResponse.message);
+    if (checkResponse.error) return res.status(400).send(checkResponse.error)
+    res.status(200).json(checkResponse);
+}
+
 const updateUser = async (req, res) => {
     const { id } = req.params;
     const body = req.body;
     const check = await crud.update(id, body, users);
-    if (check.message) return res.status(401).send(check.message);
+    if (check.message) return res.status(404).send(check.message);
     res.status(204).send("Update feito com sucesso");
 }
 
@@ -69,6 +77,7 @@ const userControll = {
     createUser,
     updateUser,
     readUser,
+    readUsersById,
     deleteUser,
     loginUser,
     logoutUser

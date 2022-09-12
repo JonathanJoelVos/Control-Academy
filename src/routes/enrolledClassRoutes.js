@@ -5,6 +5,7 @@ const routes = express.Router();
 const controll = AdminController.enrolledControll;
 routes
     .get("/enrolled", controll.readEnrolled)
+    .get("/enrolled/:id", controll.readEnrolledById)
     .post("/enrolled/create", controll.createEnrolled)
     .put("/enrolled/update/:id", controll.updateEnrolled)
     .delete("/enrolled/delete/:id", controll.deleteEnrolled)
