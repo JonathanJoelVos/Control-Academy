@@ -1,29 +1,67 @@
-import { describe, expect, jest } from "@jest/globals";
+import { afterEach, beforeEach, describe, expect, it, jest } from "@jest/globals";
 import crud from "../../controller/crud";
+import app from '../../app.js';
+import actions from '../../model/Action.js';
+import mongoose from "mongoose";
+
+
+let server;
+beforeEach(() => {
+    const port = 1111
+    server = app.listen(port);
+})
+
+afterEach(() => {
+    server.close();
+})
 
 describe('Testando CRUD', () => {
     const objetoActions = {
-        name:"jojo",
+        name: "jo",
         methods: ["test"],
     }
-    
+
+    let idTest;
+
     it('Deve criar um objeto', async () => {
-        crud.create = jest.fn().mockReturnValueOnce({
-            _id: "tetdas332sad",
-            name: "jojo",
-            methods: ["test"]
-        })
+        const actionsReturn = await crud.create(objetoActions, actions);
+        idTest = actionsReturn._id;
+        expect(actionsReturn).toEqual(expect.objectContaining({
+            ...objetoActions,
+            _id: expect.any(mongoose.Types.ObjectId)
+        }));
+        idTest = actionsReturn._id;
+    })
 
-        const retorno = crud.create();
+    it('Deve ler um objeto', async () => {
+        const retorno = await crud.read(actions, 'methods');
+        expect(retorno).toEqual(expect.any(Array));
+    })
 
+    it('Deve ler pelo id passado', async () => {
+        const retorno = await crud.readById(idTest, actions);
         expect(retorno).toEqual(expect.objectContaining({
-            _id: expect.any(String),
+            _id: idTest,
             ...objetoActions
         }));
-       
-    it('Deve ler um objeto', () => {
-        crud.read()
     })
+
+    it('Deve fazer update pelo id', async () => {
+        const bodyUpdate = {
+            name: "jonathan"
+        }
+        await crud.update(idTest, bodyUpdate, actions);
+        const updateTest = await crud.readById(idTest, actions);
+        expect(updateTest.name).toBe("jonathan");
+    })
+
+    it('Deve remover pelo id', async () => {
+        const retorno = await crud.remove(idTest, actions);
+        expect(retorno).toEqual(expect.objectContaining({
+            _id: idTest,
+            name: "jonathan",
+            methods: ["test"]
+        }));
     })
 })
 

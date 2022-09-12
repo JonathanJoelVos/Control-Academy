@@ -6,7 +6,7 @@ const createRole = async (req, res) => {
     const body = req.body;
     const checkResponse = await crud.create(body, roles);
     if (checkResponse.message) return res.status(401).send(checkResponse.message);
-    res.status(201).send(body);
+    res.status(201).send(checkResponse);
 }
 
 const listRoles = async (req, res) => {

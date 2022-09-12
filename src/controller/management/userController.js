@@ -7,26 +7,36 @@ import blacklist from "../../../redis/manipulation-blacklist.js";
 //fazer a logica de aparecer os papeis no front (aparecer só os existentes)
 
 const createUser = async (req, res) => {
+    const body = req.body;
     const salt = bcrypt.genSaltSync(12);
-    const user = await crud.create(req, res, users);
-    if (user) {
-        const newPassword = bcrypt.hashSync(user.password, salt);
-        user.password = newPassword;
-        user.authKey = "";
-        await user.save();
-    }
+    const user = await crud.create(body, users);
+    if (user.message) return res.status(401).send(user.message)
+    res.status(201).send(user);
+    const newPassword = bcrypt.hashSync(user.password, salt);
+    user.password = newPassword;
+    user.authKey = "";
+    await user.save();
 }
 
-const readUser = (req, res) => {
-    crud.read(res, users, "register")
+const readUser = async (req, res) => {
+    const checkResponse = await crud.read(users, 'register');
+    if (checkResponse.message) return res.status(400).send(checkResponse.message);
+    res.status(200).send(checkResponse);
 }
 
-const updateUser = (req, res) => {
-    crud.update(req, res, users);
+const updateUser = async (req, res) => {
+    const { id } = req.params;
+    const body = req.body;
+    const check = await crud.update(id, body, users);
+    if (check.message) return res.status(401).send(check.message);
+    res.status(204).send("Update feito com sucesso");
 }
 
-const deleteUser = (req, res) => {
-    crud.remove(req, res, users);
+const deleteUser = async (req, res) => {
+    const { id } = req.params;
+    const check = await crud.remove(id, users);
+    if (check.message) return res.status(404).send(check.message);
+    res.status(204).send("Removido com sucesso");
 }
 const loginUser = async (req, res) => {
     try {

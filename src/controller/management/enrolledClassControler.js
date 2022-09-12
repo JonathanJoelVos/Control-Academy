@@ -23,6 +23,7 @@ const createEnrolled = async (req, res) => {
         if (checkIfUserEnrolledInClass) return res.status(404).send("CPF já está nessa turma");
         const enrolled = await crud.create(bodyUse, enrolledClass);
         if (enrolled.message) return res.status(404).send(enrolled.message);
+        res.status(201).send(enrolled);
         user.register.push(enrolled._id);
         await user.save();
         classFind.enrolled.push(enrolled._id);
