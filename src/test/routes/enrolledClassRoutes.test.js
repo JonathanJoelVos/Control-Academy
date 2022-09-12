@@ -26,6 +26,7 @@ describe('Routes enrroled class', () => {
     }
 
     let idUsersControll;
+    let objetoEnrolled;
 
     it('Deve criar em /users/create', async () => {
         const retorno = await request(app)
@@ -35,21 +36,9 @@ describe('Routes enrroled class', () => {
         idUsersControll = retorno.body._id;
     })
 
-    async function objetoEnrolledFunction() {
-        const objetoEnrolled = {
-            idUser: idUsersControll,
-            role: "631249ac4a599592e6368b4f",
-            classGroup: "6315503e3ef000120553f493"
-        }
-
-        return objetoEnrolled;
-    }
-
-    const objetoEnrolled = objetoEnrolledFunction();
     //----------------------------------------------------------------------------------
 
 
-    console.log(objetoEnrolled)
     it('Deve retornar de /enrolled', async () => {
         const retorno = await request(app)
             .get("/enrolled")
@@ -58,6 +47,13 @@ describe('Routes enrroled class', () => {
 
     let idTest;
     it('Deve criar em /enrolled/create', async () => {
+
+        objetoEnrolled = {
+            idUser: idUsersControll,
+            role: "631249ac4a599592e6368b4f",
+            classGroup: "6315503e3ef000120553f493"
+        }
+
         const retorno = await request(app)
             .post("/enrolled/create")
             .send(objetoEnrolled)
@@ -77,17 +73,15 @@ describe('Routes enrroled class', () => {
     })
 
     it.each([
-        ['idUser', { idUser: "987654321" }],
-        ['role', { role: "test2@test2.com" }],
-        ['classGroup', { classGroup: "test2" }]
+        ['role', { role: "631249ac4a599592e6368b4f" }],
+        ['classGroup', { classGroup: "631249ac4a599592e6368b4f" }]
     ])('Deve atualizar o %s pelo id em /enrolled/update/:id', async (chave, params) => {
         const requestObj = { request }
         const spy = jest.spyOn(requestObj, 'request')
-        await requestObj.request(app)
+        const retorno = await requestObj.request(app)
             .put(`/enrolled/update/${idTest}`)
             .send(params)
             .expect(204);
-
         expect(spy).toHaveBeenCalled()
     })
 

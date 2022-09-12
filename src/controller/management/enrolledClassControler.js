@@ -8,6 +8,7 @@ const createEnrolled = async (req, res) => {
         const bodyUse = req.body;
         const { idUser, classGroup } = req.body;
         const user = await users.findById(idUser);
+        if (!user) return res.status(404).send("User não existe");
         const classFind = await classes.findById(classGroup);
         if (!classFind) return res.status(404).send("Turma não existe");
         const arrayEnrolleds = [];
@@ -23,11 +24,11 @@ const createEnrolled = async (req, res) => {
         if (checkIfUserEnrolledInClass) return res.status(404).send("CPF já está nessa turma");
         const enrolled = await crud.create(bodyUse, enrolledClass);
         if (enrolled.message) return res.status(404).send(enrolled.message);
-        res.status(201).send(enrolled);
         user.register.push(enrolled._id);
         await user.save();
         classFind.enrolled.push(enrolled._id);
         await classFind.save();
+        res.status(201).send(enrolled);
     } catch (error) {
         res.status(400).send(error);
     }
@@ -54,7 +55,7 @@ const updateEnrolled = async (req, res) => {
     const { id } = req.params;
     const body = req.body;
     const check = await crud.update(id, body, enrolledClass);
-    if (check.message) return res.status(401).send(check.message);
+    if (check.message) return res.status(400).send(check.message);
     res.status(204).send("Update feito com sucesso");
 }
 
@@ -63,16 +64,17 @@ const deleteEnrolled = async (req, res) => {
     const check = await crud.remove(id, enrolledClass);
     if (check.message) return res.status(404).send(check.message);
     res.status(204).send("Removido com sucesso");
-    const idUser = check.idUser._id;
-    const classGroup = check.classGroup._id;
+    const idUser = check.idUser;
+    const classGroup = check.classGroup;
     const classFind = await classes.findById(classGroup);
-    const indexClass = classFind.enrolled.findIndex(element => element == classGroup);
-    classFind.enrolled.splice(indexClass, 1);
-    await classFind.save()
     const userFind = await users.findById(idUser)
+    if(!userFind || !classFind) return res.status(400).send("Erro ao procurar Usuário ou Turma")
+    const indexClass = classFind.enrolled.findIndex(element => element == check._id)
     const indexUser = userFind.register.findIndex(element => {
         return element.toString() == check._id.toString();
     });
+    classFind.enrolled.splice(indexClass, 1);
+    await classFind.save()
     userFind.register.splice(indexUser, 1);
     await userFind.save();
 }
