@@ -68,6 +68,7 @@ const deleteEnrolled = async (req, res) => {
     const classGroup = check.classGroup;
     const classFind = await classes.findById(classGroup);
     const userFind = await users.findById(idUser)
+    console.log(classFind, userFind)
     if(!userFind || !classFind) return res.status(400).send("Erro ao procurar Usuário ou Turma")
     const indexClass = classFind.enrolled.findIndex(element => element == check._id)
     const indexUser = userFind.register.findIndex(element => {

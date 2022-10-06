@@ -3,6 +3,8 @@ import bcrypt from "bcrypt";
 import crud from "../crud.js";
 import jwt from "jsonwebtoken";
 import blacklist from "../../../redis/manipulation-blacklist.js";
+import enrolledClass from "../../model/EnrolledClass.js"
+import classes from "../../model/Class.js";
 
 //fazer a logica de aparecer os papeis no front (aparecer só os existentes)
 
@@ -41,10 +43,33 @@ const updateUser = async (req, res) => {
 }
 
 const deleteUser = async (req, res) => {
-    const { id } = req.params;
-    const check = await crud.remove(id, users);
-    if (check.message) return res.status(404).send(check.message);
-    res.status(204).send("Removido com sucesso");
+    try {
+        const { id } = req.params;
+        const {register} = await users.findOne({_id: id})
+        if(register.length <= 0){
+            const check = await crud.remove(id, users);
+            if (check.message) return res.status(404).send(check.message);
+            return res.status(204).send("Removido com sucesso");
+        } else {
+            for(let idRegister in register){
+                const enrolled  =  await enrolledClass.findOne({_id: register[idRegister]})
+                const idEnrolled = enrolled.classGroup
+                const findClass = await classes.findOne({_id: idEnrolled})
+                const classesUpdate = findClass.enrolled.filter(element => {
+                    return element.toString() !== register[idRegister].toString()
+                })
+                const teste = await classes.findOneAndUpdate({_id: findClass._id }, {enrolled: classesUpdate})
+                await teste.save()
+                await enrolledClass.findByIdAndRemove(register[idRegister])
+            }
+            const check = await crud.remove(id, users);
+            if (check.message) return res.status(404).send(check.message);
+            return res.status(204).send("Removido com sucesso");
+        }
+    } catch (error) {
+        res.status(400).send(error)
+    }
+
 }
 const loginUser = async (req, res) => {
     try {
@@ -53,12 +78,12 @@ const loginUser = async (req, res) => {
         const passwordCheck = bcrypt.compareSync(password, checkUser.password);
         if (!passwordCheck) return res.status(400).send("Email ou senha incorretos");
         const payload = { id: checkUser._id, cpf: checkUser.cpf };
-        const token = jwt.sign(payload, process.env.TOKEN_SECRETS, { expiresIn: "60m" });
+        const token = jwt.sign(payload, process.env.TOKEN_SECRET, { expiresIn: "60m" });
         res.header('Authorization', token);
         const userUpdate = await users.findByIdAndUpdate(checkUser._id, {
             authKey: token
         })
-        res.status(200).send(userUpdate);
+        res.status(200).send({sucess: true, data: userUpdate});
     } catch (err) {
         res.status(400).send("Email ou senha incorretoss");
     }
