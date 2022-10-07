@@ -13,13 +13,13 @@ class StudentController {
             const findEnrolledClass = await enrolledClass.findById(user.register[i]).populate("classGroup").populate("role");
             arrayUserEnrolledsClass.push(findEnrolledClass);
         }
-        res.send(arrayUserEnrolledsClass);
+        res.send({success: true, data: arrayUserEnrolledsClass});
     }
 
     static viewFinalGradeAndFrequency = async (req, res) => {
         try {
             const { id } = req.params;//id user
-            const { name } = req.query; // name da turma
+            const { name } = req.query; //  
             const user = await users.findById(id);
             const arrayUserEnrolledsClass = [];
             if (!user) return res.status(404).send("Erro");
@@ -30,7 +30,7 @@ class StudentController {
             const newArray = arrayUserEnrolledsClass.filter((element) => {
                 return element.classGroup.name == name;
             })
-            res.send(newArray);
+            res.send({success: true, data: newArray});
 
         } catch (error) {
             res.status(400).send(error);
@@ -47,7 +47,7 @@ class StudentController {
                 const enrolled = await enrolledClass.findById(user.register[i]).populate("classGroup");
                 array.push(enrolled);
             }
-            res.send(array);
+            res.send({success: true, data: array});
         } catch (error) {
             res.status(400).send(error);
         }

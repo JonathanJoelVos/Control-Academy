@@ -14,7 +14,7 @@ const createUser = async (req, res) => {
     const salt = bcrypt.genSaltSync(12);
     const user = await crud.create(body, users);
     if (user.message) return res.status(400).send(user.message)
-    res.status(201).send(user);
+    res.status(201).send({success: true, data:user});
     const newPassword = bcrypt.hashSync(user.password, salt);
     user.password = newPassword;
     await user.save();
@@ -23,7 +23,7 @@ const createUser = async (req, res) => {
 const readUser = async (req, res) => {
     const checkResponse = await crud.read(users, 'register');
     if (checkResponse.message) return res.status(400).send(checkResponse.message);
-    res.status(200).send(checkResponse);
+    res.status(200).send({success: true, data:checkResponse});
 }
 
 const readUsersById = async (req, res) => {
@@ -31,7 +31,7 @@ const readUsersById = async (req, res) => {
     const checkResponse = await crud.readById(id, users);
     if (checkResponse.message == 'não encontrado') return res.status(404).send(checkResponse.message);
     if (checkResponse.error) return res.status(400).send(checkResponse.error)
-    res.status(200).json(checkResponse);
+    res.status(200).json({success: true, data: checkResponse});
 }
 
 const updateUser = async (req, res) => {
@@ -39,7 +39,7 @@ const updateUser = async (req, res) => {
     const body = req.body;
     const check = await crud.update(id, body, users);
     if (check.message) return res.status(404).send(check.message);
-    res.status(204).send("Update feito com sucesso");
+    res.status(201).send({success: true, data: check});
 }
 
 const deleteUser = async (req, res) => {
@@ -64,7 +64,7 @@ const deleteUser = async (req, res) => {
             }
             const check = await crud.remove(id, users);
             if (check.message) return res.status(404).send(check.message);
-            return res.status(204).send("Removido com sucesso");
+            return res.status(204);
         }
     } catch (error) {
         res.status(400).send(error)
@@ -93,7 +93,7 @@ const logoutUser = async (req, res) => {
     try {
         const token = req.token;
         await blacklist.addTokenInBlacklist(token);
-        res.send("logout feito")
+        res.status(201).send({success: true, data: "logout feito"})
     } catch (error) {
         res.status(400).send(error)
     }
