@@ -62,10 +62,11 @@ const addActionsInRoles = async (req, res) => {
 
 const deleteActionsInRoles = async (req, res) => {
     try {
-        const { role } = req.params;
-        const { id } = req.query;
-        const roleFind = await roles.findOne({ name: role });
-        const checkIfActionExists = roleFind.actions.indexOf(id);
+        const { id } = req.params;
+        const { action } = req.query;
+        const roleFind = await roles.findById(id);
+        const actionID = await actionsModel.find({ name: action });
+        const checkIfActionExists = roleFind.actions.indexOf(actionID[0]._id);
         if (checkIfActionExists == -1) return res.status(401).send("Ação não existente");
         roleFind.actions.splice(checkIfActionExists, 1);
         await roleFind.save();
