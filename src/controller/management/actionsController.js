@@ -5,13 +5,13 @@ const createAction = async (req, res) => {
     const body = req.body;
     const checkResponse = await crud.create(body, actions);
     if (checkResponse.message) return res.status(400).send("Corpo da requisição incorreto");
-    res.status(201).send(checkResponse);
+    res.status(201).send({success: true, data: checkResponse});
 }
 
 const readActions = async (req, res) => {
     const checkResponse = await crud.read(actions, 'methods');
     if (checkResponse.message) return res.status(400).send(checkResponse.message);
-    res.status(200).json(checkResponse);
+    res.status(200).send({success: true, data: checkResponse});
 
 }
 
@@ -20,7 +20,7 @@ const readActionsById = async (req, res) => {
     const checkResponse = await crud.readById(id, actions);
     if (checkResponse.message == 'não encontrado') return res.status(404).send(checkResponse.message);
     if (checkResponse.error) return res.status(400).send(checkResponse.error)
-    res.status(200).json(checkResponse);
+    res.status(200).send({success: true, data: checkResponse});
 }
 
 const updateActions = async (req, res) => {
@@ -28,14 +28,14 @@ const updateActions = async (req, res) => {
     const body = req.body;
     const check = await crud.update(id, body, actions);
     if (check.message) return res.status(404).send(check.message);
-    res.status(204).send("Update feito com sucesso");
+    res.status(204).send();
 }
 
 const deleteActions = async (req, res) => {
     const { id } = req.params;
     const check = await crud.remove(id, actions);
     if (check.message) return res.status(404).send(check.message);
-    res.status(204).send("Removido com sucesso");
+    res.status(204).send();
 }
 
 const addMethodInActions = async (req, res) => {
@@ -49,7 +49,7 @@ const addMethodInActions = async (req, res) => {
         if (!checkIfMethodsNotExists) throw new Error('método já existente')
         actionFind.methods.push(method);
         await actionFind.save();
-        res.status(204).send("Adicionado com sucesso");
+        res.status(204).send();
     } catch (error) {
         if (error.message === "Action não encontrada") return res.status(404).send(error.message);
         res.status(400).send(error.message);
@@ -65,7 +65,7 @@ const deleteMethodInActions = async (req, res) => {
         if (checkIfMethodsExists == -1) return res.status(401).send("método não existente");
         actionFind.methods.splice(checkIfMethodsExists, 1);
         await actionFind.save();
-        res.send("Removido com sucesso");
+        res.status(204).send();
     } catch (error) {
         res.status(401).send(error);
     }

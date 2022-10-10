@@ -7,13 +7,13 @@ const createRole = async (req, res) => {
     if (!body.name) return res.status(400).send("Corpo da requisição incorreto");
     const checkResponse = await crud.create(body, roles);
     if (checkResponse.message) return res.status(400).send(checkResponse.message);
-    res.status(201).send(checkResponse);
+    res.status(201).send({sucsess: true, data: checkResponse});
 }
 
 const listRoles = async (req, res) => {
     const checkResponse = await crud.read(roles, 'actions');
     if (checkResponse.message) return res.status(400).send(checkResponse.message);
-    res.status(200).send(checkResponse);
+    res.status(200).send({sucsess: true, data: checkResponse});
 
 }
 
@@ -22,7 +22,7 @@ const readRolesById = async (req, res) => {
     const checkResponse = await crud.readById(id, roles);
     if (checkResponse.message == 'não encontrado') return res.status(404).send(checkResponse.message);
     if (checkResponse.error) return res.status(400).send(checkResponse.error)
-    res.status(200).json(checkResponse);
+    res.status(200).send({success: true, data: checkResponse});
 }
 
 /* const updateRoles = async (req, res) => {
@@ -37,7 +37,7 @@ const deleteRoles = async (req, res) => {
     const { id } = req.params;
     const check = await crud.remove(id, roles);
     if (check.message) return res.status(404).send(check.message);
-    res.status(204).send("Removido com sucesso");
+    res.status(204).send();
 }
 
 const addActionsInRoles = async (req, res) => {
@@ -54,7 +54,7 @@ const addActionsInRoles = async (req, res) => {
         if (!checkIfActionAlreadyExistsOnPaper) return res.status(400).send("Ação ou papel inexistente, ou papel já possui essa ação");
         checkRoles.actions.push(checkAction[0]._id);
         await checkRoles.save();
-        res.send("Ação adicionada com sucesso");
+        res.status(204).send();
     } catch (error) {
         res.status(400).send(error)
     }
@@ -70,7 +70,7 @@ const deleteActionsInRoles = async (req, res) => {
         if (checkIfActionExists == -1) return res.status(401).send("Ação não existente");
         roleFind.actions.splice(checkIfActionExists, 1);
         await roleFind.save();
-        res.send("Removido com sucesso");
+        res.status(204).send();
     } catch (error) {
         res.status(401).send(error);
     }

@@ -39,7 +39,7 @@ const updateUser = async (req, res) => {
     const body = req.body;
     const check = await crud.update(id, body, users);
     if (check.message) return res.status(404).send(check.message);
-    res.status(201).send({success: true, data: check});
+    return res.status(204).send();
 }
 
 const deleteUser = async (req, res) => {
@@ -49,7 +49,7 @@ const deleteUser = async (req, res) => {
         if(register.length <= 0){
             const check = await crud.remove(id, users);
             if (check.message) return res.status(404).send(check.message);
-            return res.status(204).send("Removido com sucesso");
+            return res.status(204).send();
         } else {
             for(let idRegister in register){
                 const enrolled  =  await enrolledClass.findOne({_id: register[idRegister]})

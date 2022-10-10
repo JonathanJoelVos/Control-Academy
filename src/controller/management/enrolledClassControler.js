@@ -28,7 +28,7 @@ const createEnrolled = async (req, res) => {
         await user.save();
         classFind.enrolled.push(enrolled._id);
         await classFind.save();
-        res.status(201).send(enrolled);
+        res.status(201).send({success: true, data: enrolled});
     } catch (error) {
         res.status(400).send(error);
     }
@@ -37,7 +37,7 @@ const createEnrolled = async (req, res) => {
 const readEnrolled = async (req, res) => {
     try {
         let checkModel = await enrolledClass.find().populate("role").populate("classGroup").populate("idUser");
-        res.status(200).json(checkModel);
+        res.status(200).json({success: true, data: checkModel});
     } catch (error) {
         res.status(404).send(error);
     }
@@ -48,7 +48,7 @@ const readEnrolledById = async (req, res) => {
     const checkResponse = await crud.readById(id, enrolledClass);
     if (checkResponse.message == 'não encontrado') return res.status(404).send(checkResponse.message);
     if (checkResponse.error) return res.status(400).send(checkResponse.error)
-    res.status(200).json(checkResponse);
+    res.status(200).json({success: true, data: checkResponse});
 }
 
 const updateEnrolled = async (req, res) => {
@@ -56,19 +56,18 @@ const updateEnrolled = async (req, res) => {
     const body = req.body;
     const check = await crud.update(id, body, enrolledClass);
     if (check.message) return res.status(400).send(check.message);
-    res.status(204).send("Update feito com sucesso");
+    res.status(204).send()
 }
 
 const deleteEnrolled = async (req, res) => {
     const { id } = req.params;
     const check = await crud.remove(id, enrolledClass);
     if (check.message) return res.status(404).send(check.message);
-    res.status(204).send("Removido com sucesso");
+    res.status(204).send()
     const idUser = check.idUser;
     const classGroup = check.classGroup;
     const classFind = await classes.findById(classGroup);
     const userFind = await users.findById(idUser)
-    console.log(classFind, userFind)
     if(!userFind || !classFind) return res.status(400).send("Erro ao procurar Usuário ou Turma")
     const indexClass = classFind.enrolled.findIndex(element => element == check._id)
     const indexUser = userFind.register.findIndex(element => {

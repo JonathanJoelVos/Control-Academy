@@ -18,7 +18,7 @@ const createClass = async (req, res) => {
         if (!check) throw new Error("Turma já existe.");
         const classCreate = await crud.create(bodyUse, classes);
         if (classCreate.message) return res.status(400).send(classCreate.message);
-        res.status(201).send(classCreate);
+        res.status(201).send({success: true, data: classCreate});
         const id = classCreate.subject;
         const subjectFind = await subjects.findById(id);
         subjectFind.classes.push(classCreate._id);
@@ -32,7 +32,7 @@ const createClass = async (req, res) => {
 const readClasses = async (req, res) => {
     const checkResponse = await crud.read(classes, 'subject');
     if (checkResponse.message) return res.status(400).send(checkResponse.message);
-    res.status(200).send(checkResponse);
+    res.status(200).send({success: true, data: checkResponse});
 }
 
 const readClassesById = async (req, res) => {
@@ -40,7 +40,7 @@ const readClassesById = async (req, res) => {
     const checkResponse = await crud.readById(id, classes);
     if (checkResponse.message == 'não encontrado') return res.status(404).send(checkResponse.message);
     if (checkResponse.error) return res.status(400).send(checkResponse.error)
-    res.status(200).json(checkResponse);
+    res.status(200).send({success: true, data: checkResponse});
 }
 
 const updateClass = async (req, res) => {
@@ -48,14 +48,14 @@ const updateClass = async (req, res) => {
     const body = req.body;
     const check = await crud.update(id, body, classes);
     if (check.message) return res.status(404).send(check.message);
-    res.status(204).send("Update feito com sucesso");
+    res.status(204).send();
 }
 
 const deleteClass = async (req, res) => {
     const { id } = req.params;
     const check = await crud.remove(id, classes);
     if (check.message) return res.status(404).send(check.message);
-    res.status(204).send("Removido com sucesso");
+    res.status(204).send();
     const subjectClass = await subjects.findOne({ _id: check.subject });
     if (subjectClass) {
         const index = subjectClass.classes.findIndex(element => {
