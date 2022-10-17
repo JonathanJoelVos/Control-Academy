@@ -9,8 +9,8 @@ db.once("open", () => {
 })
 
 const app = express();
-routes(app);
 app.use(cors({exposedHeaders: ['Authorization']}))
+routes(app);
 
 app.get("/", (req, res) => {
     res.send("Dale");
