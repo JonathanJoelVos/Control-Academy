@@ -83,7 +83,7 @@ const loginUser = async (req, res) => {
         const userUpdate = await users.findByIdAndUpdate(checkUser._id, {
             authKey: token
         })
-        res.status(200).send({sucess: true, data: userUpdate});
+        res.status(200).send({success: true, data: userUpdate});
     } catch (err) {
         res.status(400).send("Email ou senha incorretoss");
     }
