@@ -36,11 +36,15 @@ const readClasses = async (req, res) => {
 }
 
 const readClassesById = async (req, res) => {
-    const { id } = req.params;
-    const checkResponse = await crud.readById(id, classes);
-    if (checkResponse.message == 'não encontrado') return res.status(404).send(checkResponse.message);
-    if (checkResponse.error) return res.status(400).send(checkResponse.error)
-    res.status(200).send({success: true, data: checkResponse});
+    try {
+        const { id } = req.params;
+        const checkModel = await classes.findById(id).populate('subject');
+        console.log(checkModel)
+        if (!checkModel) return res.status(404).send();
+        return res.status(200).send({success: true, data: checkModel});
+    } catch (error) {
+        if (error) return res.status(400).send(error)   
+    }
 }
 
 const updateClass = async (req, res) => {
