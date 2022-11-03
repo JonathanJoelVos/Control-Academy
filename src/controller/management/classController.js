@@ -1,6 +1,7 @@
 import classes from "../../model/Class.js";
 import subjects from '../../model/Subject.js';
 import crud from "../crud.js";
+import enrolleds from '../../model/EnrolledClass.js'
 
 const createClass = async (req, res) => {
     try {
@@ -68,7 +69,9 @@ const deleteClass = async (req, res) => {
         subjectClass.classes.splice(index, 1);
         await subjectClass.save();
     }
-
+    for(e in check.enrolled) {
+        await enrolleds.findByIdAndRemove(e._id)
+    }
 }
 
 const aumentarVagas= async (req, res) => {
