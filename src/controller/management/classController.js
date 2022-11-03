@@ -71,12 +71,31 @@ const deleteClass = async (req, res) => {
 
 }
 
+const aumentarVagas= async (req, res) => {
+    try {
+        
+        res.status(201).send(turmaPesquisada)
+    } catch (error) {
+        res.status(401).send(error)
+    }
+}
+
+const diminuirVagas= async (req, res) => {
+    try {
+        const {id} = req.params;
+        
+        res.status(201).send(turmaPesquisada)
+    } catch (error) {
+        res.status(401).send(error)
+    }
+}
+
 const classControll = {
     createClass,
     readClasses,
     readClassesById,
     updateClass,
-    deleteClass
+    deleteClass,
 }
 
 export default classControll;

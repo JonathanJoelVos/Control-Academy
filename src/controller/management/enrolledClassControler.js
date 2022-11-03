@@ -7,6 +7,10 @@ const createEnrolled = async (req, res) => {
     try {
         const bodyUse = req.body;
         const { idUser, classGroup } = req.body;
+        const turmaPesquisada = await classes.findById(classGroup)
+        if(!turmaPesquisada) return res.status(404).send('Turma não existe')
+        turmaPesquisada.vacancy = turmaPesquisada.vacancy - 1
+        await turmaPesquisada.save();
         const user = await users.findById(idUser);
         if (!user) return res.status(404).send("User não existe");
         const classFind = await classes.findById(classGroup);
@@ -36,7 +40,7 @@ const createEnrolled = async (req, res) => {
 
 const readEnrolled = async (req, res) => {
     try {
-        let checkModel = await enrolledClass.find().populate("role").populate("classGroup").populate("idUser");
+        let checkModel = await enrolledClass.find().populate("role").populate({path: "classGroup", populate: {path: 'subject'}}).populate("idUser");
         res.status(200).json({success: true, data: checkModel});
     } catch (error) {
         res.status(404).send(error);
@@ -69,6 +73,7 @@ const deleteEnrolled = async (req, res) => {
     const classFind = await classes.findById(classGroup);
     const userFind = await users.findById(idUser)
     if(!userFind || !classFind) return res.status(400).send("Erro ao procurar Usuário ou Turma")
+    classFind.vacancy = classFind.vacancy + 1
     const indexClass = classFind.enrolled.findIndex(element => element == check._id)
     const indexUser = userFind.register.findIndex(element => {
         return element.toString() == check._id.toString();

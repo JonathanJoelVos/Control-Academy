@@ -17,11 +17,14 @@ const readSubject = async (req, res) => {
 }
 
 const readSubjectById = async (req, res) => {
-    const { id } = req.params;
-    const checkResponse = await crud.readById(id, subjects);
-    if (checkResponse.message == 'não encontrado') return res.status(404).send(checkResponse.message);
-    if (checkResponse.error) return res.status(400).send(checkResponse.error)
-    res.status(200).send({success: true, data: checkResponse});
+    try {
+        const { id } = req.params;
+        const checkResponse = await subjects.findById(id).populate('classes');
+        if (!checkResponse) return res.status(404).send(checkResponse.message);
+        res.status(200).send({success: true, data: checkResponse});
+    } catch (error) {       
+        res.status(400).send(error)
+    }
 }
 const updateSubject = async (req, res) => {
     const { id } = req.params;
