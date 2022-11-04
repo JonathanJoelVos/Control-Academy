@@ -61,7 +61,6 @@ const deleteClass = async (req, res) => {
     const { id } = req.params;
     const check = await crud.remove(id, classes);
     if (check.message) return res.status(404).send(check.message);
-    res.status(204).send();
     const subjectClass = await subjects.findOne({ _id: check.subject });
     if (subjectClass) {
         const index = subjectClass.classes.findIndex(element => {
@@ -70,53 +69,20 @@ const deleteClass = async (req, res) => {
         subjectClass.classes.splice(index, 1);
         await subjectClass.save();
     }
-    console.log(check, check.enrolled)
     for(let teste in check.enrolled) {
-        const checkRemove = await crud.remove(teste, enrolleds);
-        console.log(checkRemove, 'checkRemove')
+        const checkRemove = await crud.remove(check.enrolled[teste], enrolleds);
         /* res.status(204).send() */
         if (!checkRemove) return res.status(404).send();
         const idUser = checkRemove.idUser;
-        console.log(idUser, "idUser")
-        const classGroup = checkRemove.classGroup;
-        console.log(classGroup, "classGroup")
-        const classFind = await classes.findById(classGroup);
-        console.log(classFind, "classFind")
-        const userFind = await users.findById(idUser)
-        console.log(userFind, "userFind")
-        if(!userFind || !classFind) return res.status(400).send("Erro ao procurar Usuário ou Turma")
-        classFind.vacancy = classFind.vacancy + 1
-        const indexClass = classFind.enrolled.findIndex(element => element.toString() == checkRemove._id)
-        console.log(indexClass, "indexClass")
+        const userFind = await users.findById(idUser) 
+        if(!userFind) return res.status(400).send("Erro ao procurar Usuário ou Turma")
         const indexUser = userFind.register.findIndex(element => {
             return element.toString() == checkRemove._id.toString();
         });
-        console.log(indexUser, "indexUser")
-        classFind.enrolled.splice(indexClass, 1);
-        await classFind.save()
         userFind.register.splice(indexUser, 1);
         await userFind.save();
     }
-     
-}
-
-const aumentarVagas= async (req, res) => {
-    try {
-        
-        res.status(201).send(turmaPesquisada)
-    } catch (error) {
-        res.status(401).send(error)
-    }
-}
-
-const diminuirVagas= async (req, res) => {
-    try {
-        const {id} = req.params;
-        
-        res.status(201).send(turmaPesquisada)
-    } catch (error) {
-        res.status(401).send(error)
-    }
+    res.status(204).send();
 }
 
 const classControll = {
