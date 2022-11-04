@@ -16,7 +16,7 @@ async function auth(req, res, next) {
 
     try {
         await verifyIfTokenExistsInBlacklists(token);
-        const payload = jwt.verify(token, process.env.TOKEN_SECRET);
+        const payload = jwt.verify(token, process.env.TOKEN_SECRETS);
         const checkUser = await users.findOne({ _id: payload.id });
         if(!checkUser) return res.status(400).send('Acesso negado');
         req.token = token;

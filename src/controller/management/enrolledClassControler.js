@@ -67,7 +67,6 @@ const deleteEnrolled = async (req, res) => {
     const { id } = req.params;
     const check = await crud.remove(id, enrolledClass);
     if (check.message) return res.status(404).send(check.message);
-    res.status(204).send()
     const idUser = check.idUser;
     const classGroup = check.classGroup;
     const classFind = await classes.findById(classGroup);
@@ -82,6 +81,7 @@ const deleteEnrolled = async (req, res) => {
     await classFind.save()
     userFind.register.splice(indexUser, 1);
     await userFind.save();
+    res.status(204).send()
 }
 
 const enrolledControll = {
