@@ -14,7 +14,9 @@ const createClass = async (req, res) => {
         const array = [];
         for (let i = 0; i < checkSubject.classes.length; i++) {
             const classFind = await classes.findById({ _id: checkSubject.classes[i] });
-            array.push(classFind)
+            if(classFind) {
+                array.push(classFind)
+            }
         }
         const check = array.every(element => element.name != name);
         if (!check) throw new Error("Turma já existe.");
