@@ -1,6 +1,7 @@
 import express from 'express';
 import auth from '../controller/management/authController.js';
 import AdminController from '../controller/users/adminController.js';
+import {refresh} from '../controller/management/authController.js'
 
 const routes = express.Router();
 const controll = AdminController.userControll;
@@ -13,5 +14,6 @@ routes
     .put("/users/update/:id", auth, controll.updateUser)
     .delete("/users/delete/:id", auth, controll.deleteUser)
     .post("/login", controll.loginUser)
+    .post("/users/update_token", refresh, controll.loginUser)
 
 export default routes;

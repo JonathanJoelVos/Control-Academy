@@ -5,8 +5,25 @@ import jwt from "jsonwebtoken";
 import blacklist from "../../../redis/manipulation-blacklist.js";
 import enrolledClass from "../../model/EnrolledClass.js"
 import classes from "../../model/Class.js";
+import crypto from "crypto"
+import moment from "moment";
+import {adicionaChave} from "../../../redis/manipula-allowlist.js"
 
 //fazer a logica de aparecer os papeis no front (aparecer só os existentes)
+
+function criaTokenJWT (usuario) {
+    const payload = { id: usuario._id, cpf: usuario.cpf };
+    const token = jwt.sign(payload, process.env.TOKEN_SECRET, { expiresIn: "60m" });
+    return token
+}
+
+async function criaTokenOpaco(usuario) {
+    const tokenOpaco = crypto.randomBytes(24).toString("hex")
+    const dataDeExpiracao = moment().add(5, "d").unix()
+    await adicionaChave(tokenOpaco, usuario._id.toString(), dataDeExpiracao)
+    console.log(tokenOpaco)
+    return tokenOpaco
+}
 
 const createUser = async (req, res) => {
     const body = req.body;
@@ -77,11 +94,13 @@ const loginUser = async (req, res) => {
         const checkUser = await users.findOne({ cpf: cpf });
         const passwordCheck = bcrypt.compareSync(password, checkUser.password);
         if (!passwordCheck) return res.status(400).send("Email ou senha incorretos");
-        const payload = { id: checkUser._id, cpf: checkUser.cpf };
-        const token = jwt.sign(payload, process.env.TOKEN_SECRET, { expiresIn: "60m" });
-        res.header('Authorization', token);
+        const accessToken = criaTokenJWT(checkUser)
+        res.header('Authorization', accessToken);
+        const refreshToken = await criaTokenOpaco(checkUser);
+        res.header('Refresh-token', refreshToken);
+        console.log(refreshToken)
         const userUpdate = await users.findByIdAndUpdate(checkUser._id, {
-            authKey: token
+            authKey: accessToken
         })
         res.status(200).send({success: true, data: userUpdate});
     } catch (err) {
