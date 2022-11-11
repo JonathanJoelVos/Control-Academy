@@ -19,7 +19,6 @@ export async function refresh(req, res, next) {
         if(!id) throw new jwt.JsonWebTokenError("Token expirado")
         await deletarChave(refreshToken)
         const userRefresh = await users.findById(id)
-        console.log(userRefresh)
         res.status().send(userRefresh)
         next()
     } else {

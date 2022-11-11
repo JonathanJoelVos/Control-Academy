@@ -21,7 +21,6 @@ async function criaTokenOpaco(usuario) {
     const tokenOpaco = crypto.randomBytes(24).toString("hex")
     const dataDeExpiracao = moment().add(5, "d").unix()
     await adicionaChave(tokenOpaco, usuario._id.toString(), dataDeExpiracao)
-    console.log(tokenOpaco)
     return tokenOpaco
 }
 
@@ -98,10 +97,9 @@ const loginUser = async (req, res) => {
         res.header('Authorization', accessToken);
         const refreshToken = await criaTokenOpaco(checkUser);
         res.header('Refresh-token', refreshToken);
-        console.log(refreshToken)
         const userUpdate = await users.findByIdAndUpdate(checkUser._id, {
             authKey: accessToken
-        })
+        }).populate("register")
         res.status(200).send({success: true, data: userUpdate});
     } catch (err) {
         res.status(400).send("Email ou senha incorretoss");
