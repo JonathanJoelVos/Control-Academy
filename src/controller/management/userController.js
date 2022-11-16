@@ -7,7 +7,8 @@ import enrolledClass from "../../model/EnrolledClass.js"
 import classes from "../../model/Class.js";
 import crypto from "crypto"
 import moment from "moment";
-import {adicionaChave} from "../../../redis/manipula-allowlist.js"
+import {adicionaChave} from "../../../redis/manipula-allowlist.js";
+import role from "../../model/Role.js"
 
 //fazer a logica de aparecer os papeis no front (aparecer só os existentes)
 
@@ -97,10 +98,17 @@ const loginUser = async (req, res) => {
         res.header('Authorization', accessToken);
         const refreshToken = await criaTokenOpaco(checkUser);
         res.header('Refresh-token', refreshToken);
-        const userUpdate = await users.findByIdAndUpdate(checkUser._id, {
+        console.log(1)
+        let userUpdate = await users.findByIdAndUpdate(checkUser._id, {
             authKey: accessToken
         }).populate({path: "register", populate: {path: "classGroup"}})
-        res.status(200).send({success: true, data: userUpdate});
+        const arrayDeClassGroup = []
+        for(let enrolledIndex in userUpdate.register) {
+            console.log(userUpdate.register[enrolledIndex])
+            const roleRegister = await role.findById(userUpdate.register[enrolledIndex].role);
+            arrayDeClassGroup.push({classGroup: userUpdate.register[enrolledIndex].classGroup, role: roleRegister})
+        }
+        res.status(200).send({success: true, data: userUpdate, register: arrayDeClassGroup});
     } catch (err) {
         res.status(400).send("Email ou senha incorretoss");
     }
