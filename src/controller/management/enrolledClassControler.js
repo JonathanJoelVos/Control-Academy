@@ -9,6 +9,7 @@ const createEnrolled = async (req, res) => {
         const { idUser, classGroup } = req.body;
         const turmaPesquisada = await classes.findById(classGroup)
         if(!turmaPesquisada) return res.status(404).send('Turma não existe')
+        if(turmaPesquisada.vacancy <= 0) return res.status(404).send("Turma sem vagas");
         turmaPesquisada.vacancy = turmaPesquisada.vacancy - 1
         await turmaPesquisada.save();
         const user = await users.findById(idUser);

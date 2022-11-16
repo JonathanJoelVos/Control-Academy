@@ -73,7 +73,6 @@ const deleteClass = async (req, res) => {
     }
     for(let teste in check.enrolled) {
         const checkRemove = await crud.remove(check.enrolled[teste], enrolleds);
-        /* res.status(204).send() */
         if (!checkRemove) return res.status(404).send();
         const idUser = checkRemove.idUser;
         const userFind = await users.findById(idUser) 
