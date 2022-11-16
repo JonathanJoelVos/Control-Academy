@@ -104,9 +104,9 @@ const loginUser = async (req, res) => {
         }).populate({path: "register", populate: {path: "classGroup"}})
         const arrayDeClassGroup = []
         for(let enrolledIndex in userUpdate.register) {
-            console.log(userUpdate.register[enrolledIndex])
             const roleRegister = await role.findById(userUpdate.register[enrolledIndex].role);
-            arrayDeClassGroup.push({classGroup: userUpdate.register[enrolledIndex].classGroup, role: roleRegister})
+            const classGroupRegister = await classes.findById(userUpdate.register[enrolledIndex].classGroup).populate("subject")
+            arrayDeClassGroup.push({classGroup: classGroupRegister, role: roleRegister})
         }
         res.status(200).send({success: true, data: userUpdate, register: arrayDeClassGroup});
     } catch (err) {
