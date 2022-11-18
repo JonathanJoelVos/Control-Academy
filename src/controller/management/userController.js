@@ -98,7 +98,6 @@ const loginUser = async (req, res) => {
         res.header('Authorization', accessToken);
         const refreshToken = await criaTokenOpaco(checkUser);
         res.header('Refresh-token', refreshToken);
-        console.log(1)
         let userUpdate = await users.findByIdAndUpdate(checkUser._id, {
             authKey: accessToken
         }).populate({path: "register", populate: {path: "classGroup"}})
